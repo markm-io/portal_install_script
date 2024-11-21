@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Update package lists
 echo "Updating package lists..."
@@ -56,15 +56,17 @@ if [ -f "$postgres_folder/postgres_database_password.txt" ]; then
     echo "Previous Postgres Installation Detected. Skipping Installation."
 else
     # Ask if the user wants to set up a PostgreSQL database
-    read -p "Would you like to set up a PostgreSQL database to write data to? (y/n): " setup_db
+    echo "Would you like to set up a PostgreSQL database to write data to? (y/n): "
+    read setup_db
 
     if [ "$setup_db" = "y" ] || [ "$setup_db" = "Y" ]; then
         # Ask for external port with default 5432
-        read -p "Enter the external port for PostgreSQL (default: 5432): " db_port
+        echo "Enter the external port for PostgreSQL (default: 5432): "
+        read db_port
         db_port=${db_port:-5432}
 
         # Generate a strong 32-character password
-        db_password=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 32)
+        db_password=$(cat /dev/urandom | tr -dc 'A-Za-z0-9' | head -c 32)
         echo "Generated a strong password for PostgreSQL: $db_password"
 
         # Save the password to the appropriate folder
@@ -93,12 +95,13 @@ EOF
         echo "docker-compose.yaml file created successfully."
 
         # Optional: Ask if the user wants to start the container
-        read -p "Would you like to start the PostgreSQL container now? (y/n): " start_now
-        if [ "$start_now" = "y" ] || ["$start_now" = "Y" ]; then
-            sudo docker-compose up -d
+        echo "Would you like to start the PostgreSQL container now? (y/n): "
+        read start_now
+        if [ "$start_now" = "y" ] || [ "$start_now" = "Y" ]; then
+            sudo docker compose up -d
             echo "PostgreSQL container started."
         else
-            echo "You can start the PostgreSQL container later using 'docker-compose up -d'."
+            echo "You can start the PostgreSQL container later using 'docker compose up -d'."
         fi
     else
         echo "PostgreSQL setup skipped."
@@ -106,13 +109,15 @@ EOF
 fi
 
 # Ask if the user wants to set up the dashboard port
-read -p "Would you like to set up the dashboard port? (y/n): " setup_dashboard_port
+echo "Would you like to set up the dashboard port? (y/n): "
+read setup_dashboard_port
 
 if [ "$setup_dashboard_port" = "y" ] || [ "$setup_dashboard_port" = "Y" ]; then
     # Check for existing Portal installation
     if [ -f "$portal_folder/docker-compose.yaml" ]; then
         echo "Previous Portal Installation Detected."
-        read -p "Would you like to update the Portal installation? (y/n): " update_portal
+        echo "Would you like to update the Portal installation? (y/n): "
+        read update_portal
 
         if [ "$update_portal" = "y" ] || [ "$update_portal" = "Y" ]; then
             echo "Updating the Portal..."
@@ -128,13 +133,14 @@ if [ "$setup_dashboard_port" = "y" ] || [ "$setup_dashboard_port" = "Y" ]; then
         echo "Portal repository cloned successfully."
 
         # Ask for the business name
-        read -p "Enter the name of the business (no special characters): " business_name
+        echo "Enter the name of the business (no special characters): "
+        read business_name
 
         # Generate the SECRET_KEY
         secret_key=$(openssl rand -base64 42)
 
         # Generate a strong 32-character password
-        portal_password=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 32)
+        portal_password=$(cat /dev/urandom | tr -dc 'A-Za-z0-9' | head -c 32)
 
         # Update the config/.env-superset file
         env_file="$portal_folder/config/.env-superset"
@@ -151,7 +157,8 @@ if [ "$setup_dashboard_port" = "y" ] || [ "$setup_dashboard_port" = "Y" ]; then
     fi
 
     # Ask if the user wants to start the Portal
-    read -p "Would you like to start the Portal? (y/n): " start_portal
+    echo "Would you like to start the Portal? (y/n): "
+    read start_portal
 
     if [ "$start_portal" = "y" ] || [ "$start_portal" = "Y" ]; then
         echo "Starting the Portal..."
