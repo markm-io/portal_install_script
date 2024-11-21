@@ -5,22 +5,23 @@ echo "Updating package lists..."
 sudo apt-get update -y
 
 # Check if Git is installed
-if ! command -v git &> /dev/null
-then
+if dpkg -l | grep -q "^ii.*git"; then
+    echo "Git is already installed."
+else
     echo "Git is not installed. Installing Git..."
     sudo apt-get install git -y
-else
-    echo "Git is already installed. Updating Git..."
-    sudo apt-get install --only-upgrade git -y
 fi
 
 # Check if Docker is installed
-if ! command -v docker &> /dev/null
-then
-    echo "Docker is not installed. Installing Docker..."
-    curl -fsSL https://get.docker.com | sudo sh
+if systemctl is-active --quiet docker; then
+    echo "Docker is already installed and running."
 else
-    echo "Docker is already installed."
+    echo "Docker is not installed or not running. Installing Docker..."
+    curl -fsSL https://get.docker.com | sudo sh
+
+    # Start and enable Docker service
+    sudo systemctl start docker
+    sudo systemctl enable docker
 fi
 
 # Determine folder locations
