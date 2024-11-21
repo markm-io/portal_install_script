@@ -94,7 +94,7 @@ EOF
 
         # Optional: Ask if the user wants to start the container
         read -p "Would you like to start the PostgreSQL container now? (y/n): " start_now
-        if [[ "$start_now" == "y" || "$start_now" == "Y" ]]; then
+        if [ "$start_now" == "y" ] || ["$start_now" == "Y" ]; then
             sudo docker-compose up -d
             echo "PostgreSQL container started."
         else
@@ -108,13 +108,13 @@ fi
 # Ask if the user wants to set up the dashboard port
 read -p "Would you like to set up the dashboard port? (y/n): " setup_dashboard_port
 
-if [ "$setup_dashboard_port" == "y"] || ["$setup_dashboard_port" == "Y" ]; then
+if [ "$setup_dashboard_port" = "y" ] || [ "$setup_dashboard_port" = "Y" ]; then
     # Check for existing Portal installation
     if [ -f "$portal_folder/docker-compose.yaml" ]; then
         echo "Previous Portal Installation Detected."
         read -p "Would you like to update the Portal installation? (y/n): " update_portal
 
-        if [[ "$update_portal" == "y" || "$update_portal" == "Y" ]]; then
+        if [ "$update_portal" = "y" ] || [ "$update_portal" = "Y" ]; then
             echo "Updating the Portal..."
             cd "$portal_folder"
             git pull
@@ -139,11 +139,11 @@ if [ "$setup_dashboard_port" == "y"] || ["$setup_dashboard_port" == "Y" ]; then
         # Update the config/.env-superset file
         env_file="$portal_folder/config/.env-superset"
         if [ -f "$env_file" ]; then
-            sed -i "s/^APP_NAME=.*/APP_NAME=${business_name}/" "$env_file"
-            sed -i "s/^LOGO_RIGHT_TEXT=.*/LOGO_RIGHT_TEXT=${business_name}/" "$env_file"
-            sed -i "s/^SECRET_KEY=.*/SECRET_KEY=${secret_key}/" "$env_file"
-            sed -i "s/^DATABASE_PASSWORD=.*/DATABASE_PASSWORD=${portal_password}/" "$env_file"
-            sed -i "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=${portal_password}/" "$env_file"
+            sudo sed -i "s/^APP_NAME=.*/APP_NAME=${business_name}/" "$env_file"
+            sudo sed -i "s/^LOGO_RIGHT_TEXT=.*/LOGO_RIGHT_TEXT=${business_name}/" "$env_file"
+            sudo sed -i "s/^SECRET_KEY=.*/SECRET_KEY=${secret_key}/" "$env_file"
+            sudo sed -i "s/^DATABASE_PASSWORD=.*/DATABASE_PASSWORD=${portal_password}/" "$env_file"
+            sudo sed -i "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=${portal_password}/" "$env_file"
             echo "Configuration updated in $env_file."
         else
             echo "Error: $env_file not found."
@@ -153,7 +153,7 @@ if [ "$setup_dashboard_port" == "y"] || ["$setup_dashboard_port" == "Y" ]; then
     # Ask if the user wants to start the Portal
     read -p "Would you like to start the Portal? (y/n): " start_portal
 
-    if [ "$start_portal" == "y"] || ["$start_portal" == "Y" ]; then
+    if [ "$start_portal" = "y" ] || [ "$start_portal" = "Y" ]; then
         echo "Starting the Portal..."
         cd "$portal_folder"
         sudo docker compose up -d
