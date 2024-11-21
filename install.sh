@@ -58,7 +58,7 @@ else
     # Ask if the user wants to set up a PostgreSQL database
     read -p "Would you like to set up a PostgreSQL database to write data to? (y/n): " setup_db
 
-    if [[ "$setup_db" == "y" || "$setup_db" == "Y" ]]; then
+    if [ "$setup_db" == "y"] || ["$setup_db" == "Y" ]; then
         # Ask for external port with default 5432
         read -p "Enter the external port for PostgreSQL (default: 5432): " db_port
         db_port=${db_port:-5432}
@@ -108,7 +108,7 @@ fi
 # Ask if the user wants to set up the dashboard port
 read -p "Would you like to set up the dashboard port? (y/n): " setup_dashboard_port
 
-if [[ "$setup_dashboard_port" == "y" || "$setup_dashboard_port" == "Y" ]]; then
+if [ "$setup_dashboard_port" == "y"] || ["$setup_dashboard_port" == "Y" ]; then
     # Check for existing Portal installation
     if [ -f "$portal_folder/docker-compose.yaml" ]; then
         echo "Previous Portal Installation Detected."
@@ -153,7 +153,7 @@ if [[ "$setup_dashboard_port" == "y" || "$setup_dashboard_port" == "Y" ]]; then
     # Ask if the user wants to start the Portal
     read -p "Would you like to start the Portal? (y/n): " start_portal
 
-    if [[ "$start_portal" == "y" || "$start_portal" == "Y" ]]; then
+    if [ "$start_portal" == "y"] || ["$start_portal" == "Y" ]; then
         echo "Starting the Portal..."
         cd "$portal_folder"
         sudo docker compose up -d
