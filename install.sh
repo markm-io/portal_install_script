@@ -13,13 +13,21 @@ else
 fi
 
 # Check if Docker is installed
-if systemctl is-active --quiet docker; then
-    echo "Docker is already installed and running."
-else
-    echo "Docker is not installed or not running. Installing Docker..."
-    curl -fsSL https://get.docker.com | sudo sh
+if dpkg -l | grep -q "^ii.*docker"; then
+    echo "Docker is installed."
 
-    # Start and enable Docker service
+    # Check if Docker is active
+    if systemctl is-active --quiet docker; then
+        echo "Docker is already running."
+    else
+        echo "Docker is installed but not running. Starting Docker..."
+        sudo systemctl start docker
+        sudo systemctl enable docker
+        echo "Docker has been started and enabled to run at boot."
+    fi
+else
+    echo "Docker is not installed. Installing Docker..."
+    curl -fsSL https://get.docker.com | sudo sh
     sudo systemctl start docker
     sudo systemctl enable docker
 fi
