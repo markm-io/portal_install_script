@@ -23,13 +23,15 @@ else
     echo "Docker is already installed."
 fi
 
-# Check if /mnt/host/c exists
-if [ -d "/mnt/host/c" ]; then
-    echo "/mnt/host/c exists. Creating required folders..."
-    mkdir -p /mnt/host/c/Vista/Portal
-    mkdir -p /mnt/host/c/Vista/Postgres
+# Check if /mnt/host/c or /mnt/c exists
+if [ -d "/mnt/host/c" ] || [ -d "/mnt/c" ]; then
+    echo "Either /mnt/host/c or /mnt/c exists. Creating required folders..."
+    mkdir -p /mnt/host/c/Vista/Portal 2>/dev/null
+    mkdir -p /mnt/host/c/Vista/Postgres 2>/dev/null
+    mkdir -p /mnt/c/Vista/Portal 2>/dev/null
+    mkdir -p /mnt/c/Vista/Postgres 2>/dev/null
 else
-    echo "/mnt/host/c does not exist. Creating folders in /opt instead..."
+    echo "Neither /mnt/host/c nor /mnt/c exists. Creating folders in /opt instead..."
     sudo mkdir -p /opt/Vista/Portal
     sudo mkdir -p /opt/Vista/Postgres
 fi
