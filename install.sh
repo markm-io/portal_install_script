@@ -58,7 +58,7 @@ else
     # Ask if the user wants to set up a PostgreSQL database
     read -p "Would you like to set up a PostgreSQL database to write data to? (y/n): " setup_db
 
-    if [ "$setup_db" == "y"] || ["$setup_db" == "Y" ]; then
+    if [ "$setup_db" = "y" ] || [ "$setup_db" = "Y" ]; then
         # Ask for external port with default 5432
         read -p "Enter the external port for PostgreSQL (default: 5432): " db_port
         db_port=${db_port:-5432}
@@ -94,7 +94,7 @@ EOF
 
         # Optional: Ask if the user wants to start the container
         read -p "Would you like to start the PostgreSQL container now? (y/n): " start_now
-        if [ "$start_now" == "y" ] || ["$start_now" == "Y" ]; then
+        if [ "$start_now" = "y" ] || ["$start_now" = "Y" ]; then
             sudo docker-compose up -d
             echo "PostgreSQL container started."
         else
