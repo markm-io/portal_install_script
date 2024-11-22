@@ -114,7 +114,7 @@ read setup_dashboard_port
 
 if [ "$setup_dashboard_port" = "y" ] || [ "$setup_dashboard_port" = "Y" ]; then
     # Check for existing Portal installation
-    if [ -f "$portal_folder/docker-compose.yaml" ]; then
+    if [ -f "$portal_folder/config/.env-superset" ]; then
         echo "Previous Portal Installation Detected."
         echo "Would you like to update the Portal installation? (y/n): "
         read update_portal
@@ -132,6 +132,40 @@ if [ "$setup_dashboard_port" = "y" ] || [ "$setup_dashboard_port" = "Y" ]; then
         git clone https://github.com/markm-io/SecureHST_Superset_Repo.git "$portal_folder"
         echo "Portal repository cloned successfully."
 
+        # Create the .env-superset file with default values
+        env_file="$portal_folder/config/.env-superset"
+        sudo mkdir -p "$portal_folder/config"
+        cat <<EOF > "$env_file"
+# Superset Database Variables
+DATABASE_DIALECT=postgresql+psycopg2
+DATABASE_USER=superset
+DATABASE_PASSWORD=change_me
+DATABASE_HOST=db
+DATABASE_PORT=5432
+DATABASE_DB=superset
+
+# Postgres Database Variables
+POSTGRES_DB=superset
+POSTGRES_USER=superset
+POSTGRES_PASSWORD=change_me
+
+# Superset Configuration
+APP_NAME=Superset
+LOGO_RIGHT_TEXT=SecureHST
+SECRET_KEY=change_me_secret_key
+SUPERSET_ENV=production
+FLASK_DEBUG=false
+SUPERSET_LOAD_EXAMPLES=no
+
+# SMTP Configuration
+SMTP_MAIL_FROM=
+SMTP_HOST=
+SMTP_PORT=
+SMTP_USER=
+SMTP_PASSWORD=
+EOF
+        echo "$env_file created with default values."
+
         # Ask for the business name
         echo "Enter the name of the business (no special characters): "
         read business_name
@@ -142,17 +176,40 @@ if [ "$setup_dashboard_port" = "y" ] || [ "$setup_dashboard_port" = "Y" ]; then
         # Generate a strong 32-character password
         portal_password=$(cat /dev/urandom | tr -dc 'A-Za-z0-9' | head -c 32)
 
-        # Update the config/.env-superset file
-        env_file="$portal_folder/config/.env-superset"
-        if [ -f "$env_file" ]; then
-            sudo sed -i "s/^APP_NAME=.*/APP_NAME=${business_name}/" "$env_file"
-            sudo sed -i "s/^LOGO_RIGHT_TEXT=.*/LOGO_RIGHT_TEXT=${business_name}/" "$env_file"
-            sudo sed -i "s/^SECRET_KEY=.*/SECRET_KEY=${secret_key}/" "$env_file"
-            sudo sed -i "s/^DATABASE_PASSWORD=.*/DATABASE_PASSWORD=${portal_password}/" "$env_file"
-            sudo sed -i "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=${portal_password}/" "$env_file"
-            echo "Configuration updated in $env_file."
+        # Update the .env-superset file with user-provided details
+        sudo sed -i "s/^APP_NAME=.*/APP_NAME=${business_name}/" "$env_file"
+        sudo sed -i "s/^LOGO_RIGHT_TEXT=.*/LOGO_RIGHT_TEXT=${business_name}/" "$env_file"
+        sudo sed -i "s/^SECRET_KEY=.*/SECRET_KEY=${secret_key}/" "$env_file"
+        sudo sed -i "s/^DATABASE_PASSWORD=.*/DATABASE_PASSWORD=${portal_password}/" "$env_file"
+        sudo sed -i "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=${portal_password}/" "$env_file"
+        echo "Configuration updated in $env_file."
+
+        # Ask to set up SMTP settings
+        echo "Would you like to set up SMTP settings for sending emails/reports? (y/n): "
+        read setup_smtp
+
+        if [ "$setup_smtp" = "y" ] || [ "$setup_smtp" = "Y" ]; then
+            echo "Enter the SMTP Host (e.g., smtp.gmail.com): "
+            read smtp_host
+            echo "Enter the SMTP Mail From (e.g., mail@example.com): "
+            read smtp_mail_from
+            echo "Enter the SMTP User (e.g., mail@example.com): "
+            read smtp_user
+            echo "Enter the SMTP Password (hidden): "
+            read -s smtp_password
+            echo "Enter the SMTP Port (default: 587): "
+            read smtp_port
+            smtp_port=${smtp_port:-587}
+
+            # Append SMTP settings to the .env-superset file
+            echo "SMTP_HOST=$smtp_host" | sudo tee -a "$env_file"
+            echo "SMTP_MAIL_FROM=$smtp_mail_from" | sudo tee -a "$env_file"
+            echo "SMTP_USER=$smtp_user" | sudo tee -a "$env_file"
+            echo "SMTP_PASSWORD=$smtp_password" | sudo tee -a "$env_file"
+            echo "SMTP_PORT=$smtp_port" | sudo tee -a "$env_file"
+            echo "SMTP settings have been updated in $env_file."
         else
-            echo "Error: $env_file not found."
+            echo "SMTP setup skipped. Emails/reports may not be sent."
         fi
     fi
 
