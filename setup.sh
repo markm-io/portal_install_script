@@ -2,22 +2,22 @@
 
 # Determine the portal folder based on the available paths
 if [ -d "/mnt/host/c" ]; then
-    portal_folder="/mnt/host/c/Vista/Portal"
+    vista_folder="/mnt/host/c/Vista"
 elif [ -d "/mnt/c" ]; then
-    portal_folder="/mnt/c/Vista/Portal"
+    vista_folder="/mnt/c/Vista"
 else
-    portal_folder="/opt/Vista/Portal"
+    vista_folder="/opt/Vista"
 fi
 
 # Ensure the portal folder exists
-if [ ! -d "$portal_folder" ]; then
-    echo "Creating portal folder: $portal_folder"
-    mkdir -p "$portal_folder"
+if [ ! -d "$vista_folder" ]; then
+    echo "Creating portal folder: $vista_folder"
+    mkdir -p "$vista_folder"
 fi
 
 # Define the URL of the script to be downloaded
 SCRIPT_URL="https://raw.githubusercontent.com/markm-io/portal_install_script/main/install.sh"
-LOCAL_FILE="$portal_folder/install.sh"
+LOCAL_FILE="$vista_folder/install.sh"
 
 echo "Downloading the installation script..."
 # Download the script
@@ -42,7 +42,7 @@ echo "============================================================"
 echo " The script has been saved to: $LOCAL_FILE"
 echo " Run it with the command:"
 echo ""
-echo "   ./$LOCAL_FILE"
+echo "   .$LOCAL_FILE"
 echo ""
 echo "============================================================"
 
