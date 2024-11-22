@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set the expected commit SHA
-SCRIPT_COMMIT_SHA="default_value"
+SCRIPT_COMMIT_SHA="46eea62740cdaaf082f3467ac3e1dfe247e39876"
 
 # Determine the portal folder based on the available paths
 if [ -d "/mnt/host/c" ]; then
