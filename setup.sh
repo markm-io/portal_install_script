@@ -20,7 +20,6 @@ fi
 
 # Define the URLs of the scripts and raw content
 INSTALL_SCRIPT_URL="https://raw.githubusercontent.com/markm-io/portal_install_script/main/install.sh"
-SETUP_SCRIPT_URL="https://raw.githubusercontent.com/markm-io/portal_install_script/main/setup.sh"
 COMMIT_CHECK_URL="https://api.github.com/repos/markm-io/portal_install_script/commits/main"
 LOCAL_FILE="$portal_folder/install.sh"
 
@@ -28,12 +27,15 @@ echo "Checking the commit SHA of the remote setup.sh script..."
 # Fetch the commit SHA of the remote setup.sh
 remote_commit_sha=$(curl -s "$COMMIT_CHECK_URL" | grep -oP '(?<="sha": ")[^"]+' | head -1)
 
+# Construct the URL to download the specific version of setup.sh
+SETUP_SCRIPT_URL="https://raw.githubusercontent.com/markm-io/portal_install_script/$remote_commit_sha/setup.sh"
+
 # Check if the SHA matches the expected value
 if [ "$remote_commit_sha" != "$SCRIPT_COMMIT_SHA" ]; then
     echo "Warning: The remote script's commit SHA does not match the expected value!"
     echo "Expected: $SCRIPT_COMMIT_SHA"
     echo "Found:    $remote_commit_sha"
-    echo "Downloading the updated setup.sh script and running it..."
+    echo "Downloading the specific version of setup.sh based on the remote SHA..."
 
     # Download the new setup.sh script
     updated_setup_file="$portal_folder/setup.sh"
