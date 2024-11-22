@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set the expected commit SHA
-SCRIPT_COMMIT_SHA="46eea62740cdaaf082f3467ac3e1dfe247e39876"
+SCRIPT_COMMIT_SHA="232ba0fc825db58b7eb931d2e8b64c9ed9f72bee"
 
 echo $SCRIPT_COMMIT_SHA
 
