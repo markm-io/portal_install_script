@@ -2,22 +2,22 @@
 
 # Determine the portal folder based on the available paths
 if [ -d "/mnt/host/c" ]; then
-    postgres_folder="/mnt/host/c/Vista/Portal"
+    vista_folder="/mnt/host/c/Vista"
 elif [ -d "/mnt/c" ]; then
-    postgres_folder="/mnt/c/Vista/Portal"
+    vista_folder="/mnt/c/Vista"
 else
-    postgres_folder="/opt/Vista/Portal"
+    vista_folder="/opt/Vista"
 fi
 
 # Ensure the portal folder exists
-if [ ! -d "$postgres_folder" ]; then
-    echo "Creating portal folder: $postgres_folder"
-    mkdir -p "$postgres_folder"
+if [ ! -d "$vista_folder" ]; then
+    echo "Creating portal folder: $vista_folder"
+    mkdir -p "$vista_folder"
 fi
 
 # Define the URL of the script to be downloaded
 SCRIPT_URL="https://raw.githubusercontent.com/markm-io/portal_install_script/main/install.sh"
-LOCAL_FILE="$postgres_folder/install.sh"
+LOCAL_FILE="$vista_folder/install.sh"
 
 echo "Downloading the installation script..."
 # Download the script
