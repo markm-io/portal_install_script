@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set the expected commit SHA
-SCRIPT_COMMIT_SHA="245451b0ff4882a7ddb3f4d4caa91909bb737f4f"
+SCRIPT_COMMIT_SHA="default_value"
 
 # Determine the portal folder based on the available paths
 if [ -d "/mnt/host/c" ]; then
@@ -23,38 +23,43 @@ INSTALL_SCRIPT_URL="https://raw.githubusercontent.com/markm-io/portal_install_sc
 COMMIT_CHECK_URL="https://api.github.com/repos/markm-io/portal_install_script/commits/main"
 LOCAL_FILE="$portal_folder/install.sh"
 
-echo "Checking the commit SHA of the remote setup.sh script..."
-# Fetch the commit SHA of the remote setup.sh
-remote_commit_sha=$(curl -s "$COMMIT_CHECK_URL" | grep -oP '(?<="sha": ")[^"]+' | head -1)
-
-# Construct the URL to download the specific version of setup.sh
-SETUP_SCRIPT_URL="https://raw.githubusercontent.com/markm-io/portal_install_script/$remote_commit_sha/setup.sh"
-
-# Check if the SHA matches the expected value
-if [ "$remote_commit_sha" != "$SCRIPT_COMMIT_SHA" ]; then
-    echo "Warning: The remote script's commit SHA does not match the expected value!"
-    echo "Expected: $SCRIPT_COMMIT_SHA"
-    echo "Found:    $remote_commit_sha"
-    echo "Downloading the specific version of setup.sh based on the remote SHA..."
-
-    # Download the new setup.sh script
-    updated_setup_file="$portal_folder/setup.sh"
-    curl -o "$updated_setup_file" -L "$SETUP_SCRIPT_URL"
-
-    # Check if the download was successful
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to download the updated setup.sh from $SETUP_SCRIPT_URL"
-        exit 1
-    fi
-
-    echo "Making the updated setup.sh executable..."
-    chmod +x "$updated_setup_file"
-
-    echo "Running the updated setup.sh script..."
-    sudo "$updated_setup_file"
-    exit 0
+# Flag to indicate the script is running the downloaded version
+if [[ "$1" == "--updated-script" ]]; then
+    echo "Running the updated setup.sh script. Skipping SHA check."
 else
-    echo "Commit SHA matches. Proceeding with the current script."
+    echo "Checking the commit SHA of the remote setup.sh script..."
+    # Fetch the commit SHA of the remote setup.sh
+    remote_commit_sha=$(curl -s "$COMMIT_CHECK_URL" | grep -oP '(?<="sha": ")[^"]+' | head -1)
+
+    # Construct the URL to download the specific version of setup.sh
+    SETUP_SCRIPT_URL="https://raw.githubusercontent.com/markm-io/portal_install_script/$remote_commit_sha/setup.sh"
+
+    # Check if the SHA matches the expected value
+    if [ "$remote_commit_sha" != "$SCRIPT_COMMIT_SHA" ]; then
+        echo "Warning: The remote script's commit SHA does not match the expected value!"
+        echo "Expected: $SCRIPT_COMMIT_SHA"
+        echo "Found:    $remote_commit_sha"
+        echo "Downloading the specific version of setup.sh based on the remote SHA..."
+
+        # Download the new setup.sh script
+        updated_setup_file="$portal_folder/setup.sh"
+        curl -o "$updated_setup_file" -L "$SETUP_SCRIPT_URL"
+
+        # Check if the download was successful
+        if [ $? -ne 0 ]; then
+            echo "Error: Failed to download the updated setup.sh from $SETUP_SCRIPT_URL"
+            exit 1
+        fi
+
+        echo "Making the updated setup.sh executable..."
+        chmod +x "$updated_setup_file"
+
+        echo "Running the updated setup.sh script..."
+        sudo "$updated_setup_file" --updated-script
+        exit 0
+    else
+        echo "Commit SHA matches. Proceeding with the current script."
+    fi
 fi
 
 echo "Downloading the installation script..."
