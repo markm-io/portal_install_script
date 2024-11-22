@@ -1,29 +1,29 @@
 #!/bin/bash
 
 # Set the expected commit SHA
-SCRIPT_COMMIT_SHA="232ba0fc825db58b7eb931d2e8b64c9ed9f72bee"
+SCRIPT_COMMIT_SHA="46eea62740cdaaf082f3467ac3e1dfe247e39876"
 
 echo $SCRIPT_COMMIT_SHA
 
 # Determine the portal folder based on the available paths
 if [ -d "/mnt/host/c" ]; then
-    portal_folder="/mnt/host/c/Vista/Portal"
+    vista_folder="/mnt/host/c/Vista"
 elif [ -d "/mnt/c" ]; then
-    portal_folder="/mnt/c/Vista/Portal"
+    vista_folder="/mnt/c/Vista"
 else
-    portal_folder="/opt/Vista/Portal"
+    vista_folder="/opt/Vista"
 fi
 
 # Ensure the portal folder exists
-if [ ! -d "$portal_folder" ]; then
-    echo "Creating portal folder: $portal_folder"
-    mkdir -p "$portal_folder"
+if [ ! -d "$vista_folder" ]; then
+    echo "Creating portal folder: $vista_folder"
+    mkdir -p "$vista_folder"
 fi
 
 # Define the URLs of the scripts and raw content
 INSTALL_SCRIPT_URL="https://raw.githubusercontent.com/markm-io/portal_install_script/main/install.sh"
 COMMIT_CHECK_URL="https://api.github.com/repos/markm-io/portal_install_script/commits/main"
-LOCAL_FILE="$portal_folder/install.sh"
+LOCAL_FILE="$vista_folder/install.sh"
 
 # Flag to indicate the script is running the downloaded version
 if [[ "$1" == "--updated-script" ]]; then
@@ -44,7 +44,7 @@ else
         echo "Downloading the specific version of setup.sh based on the remote SHA..."
 
         # Download the new setup.sh script
-        updated_setup_file="$portal_folder/setup.sh"
+        updated_setup_file="$vista_folder/setup.sh"
         curl -o "$updated_setup_file" -L "$SETUP_SCRIPT_URL"
 
         # Check if the download was successful
@@ -87,7 +87,7 @@ echo "============================================================"
 echo " The script has been saved to: $LOCAL_FILE"
 echo " To run it manually, use the command:"
 echo ""
-echo "   ./$LOCAL_FILE"
+echo "   .$LOCAL_FILE"
 echo ""
 echo "============================================================"
 
