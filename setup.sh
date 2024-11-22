@@ -1,5 +1,7 @@
 #!/bin/bash
 
+SCRIPT_COMMIT_SHA="default_value"
+
 # Determine the portal folder based on the available paths
 if [ -d "/mnt/host/c" ]; then
     vista_folder="/mnt/host/c/Vista"
